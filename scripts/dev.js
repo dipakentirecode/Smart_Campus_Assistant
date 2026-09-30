@@ -149,7 +149,7 @@ async function startApplications() {
       prefixColor: "blue"
     },
     {
-      command: "npm run dev --workspace frontend",
+      command: "node scripts/wait-for-api.js && npm run dev --workspace frontend",
       name: "web",
       prefixColor: "green"
     }

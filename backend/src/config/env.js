@@ -8,6 +8,7 @@ const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   DATA_MODE: z.enum(["local", "services"]).default(process.env.NODE_ENV === "production" ? "services" : "local"),
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
+  HOST: z.string().trim().min(1).default("0.0.0.0"),
   CLIENT_ORIGIN: z.string().url().default("http://localhost:5173"),
   MONGODB_URI: z.string().min(1).default("mongodb://127.0.0.1:27017/smart_campus_assistant"),
   JWT_SECRET: z.string()

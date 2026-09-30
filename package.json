@@ -10,9 +10,11 @@
   "scripts": {
     "dev": "node backend/scripts/ensure-dev-env.js && node scripts/dev.js",
     "build": "npm run build --workspace frontend",
-    "test": "npm run test --workspace backend"
+    "test": "npm run test --workspace backend",
+    "report:build": "node scripts/build-report.js"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "pdfkit": "^0.20.2"
   }
 }

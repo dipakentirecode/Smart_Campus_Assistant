@@ -9,6 +9,19 @@ function emptyState() {
   return { users: [], documents: [], conversations: [], chunks: [] };
 }
 
+const demoFaqChunks = [
+  {
+    id: "demo-faq-exam-date",
+    content: "DEMO FAQ — NOT AN OFFICIAL UNIVERSITY NOTICE. Illustrative local-testing example only: the sample semester exam date is 18 November 2026. This date is not verified university information. Check the latest official examination timetable or contact the Examination Office before making plans.",
+    metadata: { documentId: "demo-faq-exam-date", filename: "DEMO_FAQ_EXAM_DATE_NOT_OFFICIAL.txt", page: 1 }
+  },
+  {
+    id: "demo-faq-fee-deadline",
+    content: "DEMO FAQ — NOT AN OFFICIAL UNIVERSITY NOTICE. Illustrative local-testing example only: the sample fee payment deadline is 15 December 2026. This date is not verified university information. Check the latest official fee circular or contact the Accounts Office before making payment.",
+    metadata: { documentId: "demo-faq-fee-deadline", filename: "DEMO_FAQ_FEE_DEADLINE_NOT_OFFICIAL.txt", page: 1 }
+  }
+];
+
 function clone(value) {
   return value === undefined ? undefined : structuredClone(value);
 }
@@ -21,6 +34,19 @@ export class LocalStore {
   constructor(path = defaultPath) {
     this.path = path;
     this.queue = Promise.resolve();
+    this.demoFaqsSeeded = false;
+  }
+
+  async ensureDemoFaqs() {
+    if (this.demoFaqsSeeded) return;
+    await this.update((state) => {
+      if (!state.demoFaqsSeeded) {
+        const existingIds = new Set(state.chunks.map((chunk) => chunk.id));
+        state.chunks.push(...demoFaqChunks.filter((chunk) => !existingIds.has(chunk.id)));
+        state.demoFaqsSeeded = true;
+      }
+    });
+    this.demoFaqsSeeded = true;
   }
 
   async load() {
@@ -110,6 +136,7 @@ export class LocalStore {
   }
 
   async searchChunks(question, limit) {
+    await this.ensureDemoFaqs();
     const stopWords = new Set(["a", "an", "and", "are", "do", "does", "for", "from", "how", "i", "in", "is", "it", "me", "of", "on", "or", "please", "show", "tell", "the", "to", "what", "when", "where", "which", "who", "why", "with", "would"]);
     const tokenize = (text) => (text.toLowerCase().match(/[a-z0-9]+/g) ?? [])
       .map((word) => word.length > 4 && word.endsWith("s") ? word.slice(0, -1) : word)
